@@ -135,31 +135,28 @@ export class MainPage {
   }
 
   async clickSwithLightModeIcon() {
-    await this.page.getByLabel('Switch between dark and light').click(); //from system to light
-    await this.page.getByLabel('Switch between dark and light').click(); ////from light to dark
+    await test.step('Нажатие на иконку mode', async () => {
+      await this.page.getByLabel('Switch between dark and light').click(); //from system to light
+      await this.page.getByLabel('Switch between dark and light').click(); ////from light to dark
+    });
   }
 
   async checkDataThemeAttributeValue() {
-    await expect.soft(this.page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    test.step('Проверка значения смены атрибута', async () => {
+      await expect.soft(this.page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    });
   }
-
-  async setLightMode() {
-    await this.page.evaluate(() => {
-      document.querySelector('html')?.setAttribute('data-theme', 'light');
+  async setTheme(mode: string) {
+    await test.step(`Установка ${mode} темы`, async () => {
+      await this.page.evaluate((theme) => {
+        document.querySelector('html')?.setAttribute('data-theme', theme);
+      }, mode);
     });
   }
 
-  async setDarkMode() {
-    await this.page.evaluate(() => {
-      document.querySelector('html')?.setAttribute('data-theme', 'dark');
+  async checkLayoutMode(mode: string) {
+    await test.step(`Скриношотная проверка ${mode} темы`, async () => {
+      await expect(this.page).toHaveScreenshot(`pageWith${mode}Mode.png`);
     });
-  }
-
-  async checkLayoutWithLightMode() {
-    await expect(this.page).toHaveScreenshot(`pageWithLihgtMode.png`);
-  }
-
-  async checkLayoutWithDarkMode() {
-    await expect(this.page).toHaveScreenshot(`pageWithDarkMode.png`);
   }
 }
